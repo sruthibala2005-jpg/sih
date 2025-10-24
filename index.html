@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM Internship Scheme - AI Recommendation Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #2d3748;
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            background: #2d3748;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #4a5568;
+        }
+
+        .tab.active {
+            background: #3182ce;
+            border-bottom: 3px solid #63b3ed;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c5282;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3182ce;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(49, 130, 206, 0.6);
+        }
+
+        .internship-card {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border-left: 5px solid #3182ce;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .internship-card:hover {
+            transform: translateX(5px);
+        }
+
+        .internship-card h3 {
+            color: #2c5282;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .match-score {
+            display: inline-block;
+            background: #3182ce;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .skills-tag {
+            display: inline-block;
+            background: #bee3f8;
+            color: #2c5282;
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin: 5px 5px 5px 0;
+            font-size: 14px;
+        }
+
+        .profile-section {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .profile-section h3 {
+            color: #2c5282;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .stat-box {
+            display: inline-block;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #3182ce;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #2c5282;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3182ce 0%, #63b3ed 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PM Internship Scheme</h1>
+            <p class="subtitle">AI-Powered Internship Recommendation Engine</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(event, 'profile')">📋 My Profile</button>
+            <button class="tab" onclick="switchTab(event, 'preferences')">⚙️ Preferences</button>
+            <button class="tab" onclick="switchTab(event, 'recommendations')">🎯 Recommendations</button>
+            <button class="tab" onclick="switchTab(event, 'applications')">📤 Applications</button>
+            <button class="tab" onclick="switchTab(event, 'analytics')">📊 Analytics</button>
+        </div>
+
+        <div id="profile" class="tab-content active">
+            <div class="profile-section">
+                <h3>Build Your Profile</h3>
+                <p style="color: #4a5568; margin-bottom: 20px;">Let our AI understand your strengths and match you with perfect opportunities!</p>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="your.email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Education Level</label>
+                    <select id="education" required>
+                        <option value="">Select education level</option>
+                        <option value="diploma">Diploma</option>
+                        <option value="undergraduate">Undergraduate</option>
+                        <option value="graduate">Graduate</option>
+                        <option value="postgraduate">Post Graduate</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Field of Study</label>
+                    <input type="text" id="field" placeholder="e.g., Computer Science, Business, Engineering" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Skills (comma-separated)</label>
+                    <input type="text" id="skills" placeholder="e.g., Python, Data Analysis, Communication" required>
+                </div>
+
+                <div class="form-group">
+                    <label>About You</label>
+                    <textarea id="bio" rows="4" placeholder="Tell us about your interests, goals, and what makes you unique..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn">Save Profile</button>
+            </form>
+        </div>
+
+        <div id="preferences" class="tab-content">
+            <div class="profile-section">
+                <h3>Customize Your Preferences</h3>
+                <p style="color: #4a5568; margin-bottom: 20px;">Help our AI find the perfect internship matches for you!</p>
+            </div>
+
+            <form id="preferencesForm">
+                <div class="form-group">
+                    <label>Preferred Industry</label>
+                    <select id="industry" required>
+                        <option value="">Select industry</option>
+                        <option value="technology">Technology</option>
+                        <option value="finance">Finance</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="education">Education</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="consulting">Consulting</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Location</label>
+                    <input type="text" id="location" placeholder="e.g., Mumbai, Bangalore, Remote" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Duration (months)</label>
+                    <select id="duration" required>
+                        <option value="">Select duration</option>
+                        <option value="3">3 months</option>
+                        <option value="6">6 months</option>
+                        <option value="12">12 months</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Work Mode</label>
+                    <select id="workMode" required>
+                        <option value="">Select work mode</option>
+                        <option value="remote">Remote</option>
+                        <option value="onsite">On-site</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">Update Preferences</button>
+            </form>
+        </div>
+
+        <div id="recommendations" class="tab-content">
+            <div class="profile-section">
+                <h3>Your AI-Matched Internships</h3>
+                <p style="color: #4a5568; margin-bottom: 20px;">Based on your profile and preferences, here are your top matches!</p>
+            </div>
+
+            <div id="recommendationsList">
+                <div class="empty-state">
+                    <h3>No Recommendations Yet</h3>
+                    <p>Complete your profile and preferences to get AI-powered internship recommendations!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="applications" class="tab-content">
+            <div class="profile-section">
+                <h3>My Applications</h3>
+                <p style="color: #4a5568; margin-bottom: 20px;">Track all your internship applications in one place</p>
+            </div>
+
+            <div id="applicationsList">
+                <div class="empty-state">
+                    <h3>No Applications Yet</h3>
+                    <p>Start applying to recommended internships to see them here!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics" class="tab-content">
+            <div class="profile-section">
+                <h3>Your Progress Analytics</h3>
+                <p style="color: #4a5568; margin-bottom: 20px;">Track your internship search journey</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                <div class="stat-box">
+                    <div class="stat-number" id="profileScore">0%</div>
+                    <div>Profile Completion</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="matchCount">0</div>
+                    <div>Matches Found</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="appliedCount">0</div>
+                    <div>Applications Sent</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <h4 style="color: #2c5282; margin-bottom: 10px;">Profile Strength</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userData = {
+            profile: {},
+            preferences: {},
+            applications: []
+        };
+
+        const internshipDatabase = [
+            { 
+                id: 1, 
+                title: "Software Development Intern", 
+                company: "Tech Innovators Pvt Ltd", 
+                industry: "technology", 
+                location: "Bangalore", 
+                duration: 6, 
+                mode: "hybrid", 
+                skills: ["Python", "Java", "Web Development"], 
+                description: "Work on cutting-edge web applications with experienced developers. You'll contribute to real projects, learn industry best practices, and gain hands-on experience in full-stack development.",
+                about: "Tech Innovators is a leading software development company specializing in enterprise solutions. We foster innovation and provide mentorship to help interns grow their technical skills.",
+                url: "https://internshala.com"
+            },
+            { 
+                id: 2, 
+                title: "Data Science Intern", 
+                company: "Analytics Pro", 
+                industry: "technology", 
+                location: "Mumbai", 
+                duration: 6, 
+                mode: "remote", 
+                skills: ["Python", "Data Analysis", "Machine Learning"], 
+                description: "Analyze large datasets and build ML models to derive actionable insights. Work with industry-standard tools and collaborate with data scientists.",
+                about: "Analytics Pro is at the forefront of data-driven decision making. We work with Fortune 500 companies to unlock the power of their data through advanced analytics and machine learning.",
+                url: "https://www.linkedin.com/jobs"
+            },
+            { 
+                id: 3, 
+                title: "Marketing Intern", 
+                company: "Brand Makers", 
+                industry: "marketing", 
+                location: "Delhi", 
+                duration: 3, 
+                mode: "onsite", 
+                skills: ["Communication", "Social Media", "Content Writing"], 
+                description: "Create engaging marketing campaigns across multiple channels. Develop content strategies and measure campaign performance.",
+                about: "Brand Makers is a creative marketing agency that has helped launch over 100 successful brands. We believe in innovative storytelling and data-driven marketing strategies.",
+                url: "https://www.naukri.com"
+            },
+            { 
+                id: 4, 
+                title: "Finance Analyst Intern", 
+                company: "FinCorp Solutions", 
+                industry: "finance", 
+                location: "Mumbai", 
+                duration: 6, 
+                mode: "hybrid", 
+                skills: ["Excel", "Financial Analysis", "Accounting"], 
+                description: "Support financial planning and analysis activities. Learn to create financial models, analyze market trends, and prepare reports for senior management.",
+                about: "FinCorp Solutions is a premier financial services firm offering comprehensive financial planning and investment advisory services. We're committed to developing future finance leaders.",
+                url: "https://internshala.com"
+            },
+            { 
+                id: 5, 
+                title: "Product Management Intern", 
+                company: "StartUp Hub", 
+                industry: "technology", 
+                location: "Bangalore", 
+                duration: 6, 
+                mode: "remote", 
+                skills: ["Product Strategy", "Communication", "Analysis"], 
+                description: "Help shape product roadmap and work closely with engineering and design teams. Conduct user research and analyze product metrics.",
+                about: "StartUp Hub is a fast-growing tech startup building innovative SaaS products. We offer a dynamic environment where interns can make real impact and learn rapidly.",
+                url: "https://angel.co/jobs"
+            },
+            { 
+                id: 6, 
+                title: "Healthcare Operations Intern", 
+                company: "MediCare Plus", 
+                industry: "healthcare", 
+                location: "Chennai", 
+                duration: 3, 
+                mode: "onsite", 
+                skills: ["Operations", "Communication", "Healthcare"], 
+                description: "Streamline hospital operations and improve patient care processes. Work on operational efficiency projects and data analysis.",
+                about: "MediCare Plus is a multi-specialty hospital chain dedicated to providing quality healthcare. We're innovating in healthcare operations and seeking passionate individuals to join our team.",
+                url: "https://www.linkedin.com/jobs"
+            }
+        ];
+
+        function switchTab(event, tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            userData.profile = {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                education: document.getElementById('education').value,
+                field: document.getElementById('field').value,
+                skills: document.getElementById('skills').value.split(',').map(s => s.trim()),
+                bio: document.getElementById('bio').value
+            };
+
+            alert('✅ Profile saved successfully! Now set your preferences to get recommendations.');
+            updateAnalytics();
+        });
+
+        document.getElementById('preferencesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            userData.preferences = {
+                industry: document.getElementById('industry').value,
+                location: document.getElementById('location').value,
+                duration: parseInt(document.getElementById('duration').value),
+                workMode: document.getElementById('workMode').value
+            };
+
+            alert('✅ Preferences updated! Check the Recommendations tab for your matches.');
+            generateRecommendations();
+            updateAnalytics();
+        });
+
+        function generateRecommendations() {
+            if (!userData.preferences.industry) return;
+
+            const matches = internshipDatabase.filter(internship => {
+                let score = 0;
+                if (internship.industry === userData.preferences.industry) score += 40;
+                if (internship.location.toLowerCase().includes(userData.preferences.location.toLowerCase()) || 
+                    userData.preferences.location.toLowerCase().includes('remote')) score += 20;
+                if (internship.duration === userData.preferences.duration) score += 20;
+                if (internship.mode === userData.preferences.workMode) score += 20;
+                
+                return score > 0;
+            }).map(internship => {
+                let score = 0;
+                if (internship.industry === userData.preferences.industry) score += 40;
+                if (internship.location.toLowerCase().includes(userData.preferences.location.toLowerCase()) || 
+                    userData.preferences.location.toLowerCase().includes('remote')) score += 20;
+                if (internship.duration === userData.preferences.duration) score += 20;
+                if (internship.mode === userData.preferences.workMode) score += 20;
+                
+                return { ...internship, matchScore: score };
+            }).sort((a, b) => b.matchScore - a.matchScore);
+
+            displayRecommendations(matches);
+        }
+
+        function displayRecommendations(matches) {
+            const container = document.getElementById('recommendationsList');
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No Matches Found</h3><p>Try adjusting your preferences to find more opportunities!</p></div>';
+                return;
+            }
+
+            container.innerHTML = matches.map(internship => `
+                <div class="internship-card">
+                    <span class="match-score">${internship.matchScore}% Match</span>
+                    <h3>${internship.title}</h3>
+                    <p style="color: #4a5568; margin: 10px 0;"><strong>${internship.company}</strong></p>
+                    <p style="color: #718096; margin-bottom: 15px;">${internship.description}</p>
+                    <div>
+                        <span class="skills-tag">📍 ${internship.location}</span>
+                        <span class="skills-tag">⏱️ ${internship.duration} months</span>
+                        <span class="skills-tag">💼 ${internship.mode}</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        ${internship.skills.map(skill => `<span class="skills-tag">${skill}</span>`).join('')}
+                    </div>
+                    <button class="btn" style="margin-top: 15px; padding: 10px 25px; font-size: 14px;" onclick="applyToInternship(${internship.id})">Apply Now</button>
+                </div>
+            `).join('');
+        }
+
+        function applyToInternship(id) {
+            const internship = internshipDatabase.find(i => i.id === id);
+            if (!internship) return;
+
+            if (!userData.applications.find(app => app.id === id)) {
+                userData.applications.push({
+                    ...internship,
+                    appliedDate: new Date().toLocaleDateString(),
+                    status: 'Under Review'
+                });
+                alert(`✅ Successfully applied to ${internship.title}!`);
+                updateApplications();
+                updateAnalytics();
+            } else {
+                alert('You have already applied to this internship!');
+            }
+        }
+
+        function updateApplications() {
+            const container = document.getElementById('applicationsList');
+            
+            if (userData.applications.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No Applications Yet</h3><p>Start applying to recommended internships to see them here!</p></div>';
+                return;
+            }
+
+            container.innerHTML = userData.applications.map(app => `
+                <div class="internship-card">
+                    <h3>${app.title}</h3>
+                    <p style="color: #4a5568; margin: 10px 0;"><strong>${app.company}</strong></p>
+                    <div style="margin-top: 10px;">
+                        <span class="skills-tag">📅 Applied: ${app.appliedDate}</span>
+                        <span class="skills-tag" style="background: #fef5e7; color: #d97706;">⏳ ${app.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateAnalytics() {
+            let profileCompletion = 0;
+            if (userData.profile.name) profileCompletion += 20;
+            if (userData.profile.skills && userData.profile.skills.length > 0) profileCompletion += 20;
+            if (userData.profile.bio) profileCompletion += 20;
+            if (userData.preferences.industry) profileCompletion += 20;
+            if (userData.preferences.location) profileCompletion += 20;
+
+            document.getElementById('profileScore').textContent = profileCompletion + '%';
+            document.getElementById('progressBar').style.width = profileCompletion + '%';
+            
+            const matchCount = document.querySelectorAll('#recommendationsList .internship-card').length;
+            document.getElementById('matchCount').textContent = matchCount;
+            document.getElementById('appliedCount').textContent = userData.applications.length;
+        }
+
+        updateAnalytics();
+    </script>
+</body>
+</html>
